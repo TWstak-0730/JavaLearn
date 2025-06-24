@@ -1,11 +1,7 @@
 package DAY3.Event;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import java.awt.event.*;
+import javax.swing.*;
 
 /**
  * 事件源：按钮 图片 窗体
@@ -89,4 +85,24 @@ class Mouseex extends Mouse{
     public void mouseExited(MouseEvent e){
         System.out.println("Exited!");
     }
+}
+
+class Key implements KeyListener{
+    @Override
+    public void keyPressed(KeyEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    
 }

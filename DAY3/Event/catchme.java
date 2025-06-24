@@ -5,7 +5,7 @@ import java.util.Random;
 import javax.swing.*;
 
 
-public class catchme extends JFrame implements MouseListener {
+public class catchme extends JFrame implements MouseListener,KeyListener {
     Random a;
     JButton bt;
 
@@ -23,10 +23,11 @@ public class catchme extends JFrame implements MouseListener {
        bt = new JButton("bt");
        bt.setBounds(0, 0, 100, 100);
        getContentPane().add(bt);
-
+        this.addKeyListener(this);
         bt.addMouseListener(this);
         a= new Random();
        setVisible(true);
+       
 
     }
     int abs(int x,int y){
@@ -62,6 +63,21 @@ public class catchme extends JFrame implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent e){
         
+    }
+    @Override
+    public void keyPressed(KeyEvent e) {
+        System.out.println("键盘按下了");
+        
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        System.out.println("键盘松开了");
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
