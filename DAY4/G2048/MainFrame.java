@@ -17,6 +17,7 @@ public class MainFrame extends JFrame implements KeyListener{
         initFrame();
         ShowGame();
         setVisible(true);
+
     }
     
     /**
@@ -36,6 +37,8 @@ public class MainFrame extends JFrame implements KeyListener{
      * 此方法用于绘制游戏界面
     */
     public void ShowGame(){
+        getContentPane().removeAll();
+
         for(int i=0;i<4;i++){
             for(int j=0;j<4;j++){
                 if(datas[i][j]!=0){
@@ -50,6 +53,8 @@ public class MainFrame extends JFrame implements KeyListener{
         JLabel bg = new JLabel(new ImageIcon("C:\\Users\\STAK\\Desktop\\JavaLearn\\2048\\background.png"));
         bg.setBounds(40,40,420,420);
         getContentPane().add(bg);
+
+        getContentPane().repaint();
     }
 
      @Override
@@ -80,13 +85,13 @@ public class MainFrame extends JFrame implements KeyListener{
                 break;
         }
         GenNewNum();
-            if(CheckWin()){
+        if(CheckWin()){
             Win();
-            }
-            if(CheckLose()){
-                Lose();
-            }
-        
+        }
+            if(CheckFull()&&CheckLose()){
+            Lose();
+        }
+        ShowGame();
         for(int i=0;i<4;i++){
             for(int j=0;j<4;j++){
                 System.out.printf("%2d ",datas[i][j]);
@@ -304,7 +309,7 @@ public class MainFrame extends JFrame implements KeyListener{
 
     void GenNewNum(){
         Random rand = new Random();
-        while(true){
+        while(!CheckFull()){
         int pos = rand.nextInt(16);
         int x = pos/4;
         int y = pos%4;
@@ -313,5 +318,14 @@ public class MainFrame extends JFrame implements KeyListener{
             break;
         }
         }
-    } 
+    }
+    
+    boolean CheckFull(){
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if(datas[i][j]==0)return false;
+            }
+        }
+        return true;
+    }
 }
