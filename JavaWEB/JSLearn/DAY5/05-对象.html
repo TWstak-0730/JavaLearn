@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let user = {
+        name:"TOM",
+        age:17,
+        say(){
+            alert(`My name is ${this.name},i am ${this.age}`);
+        },
+        sing:() => {
+            alert(this); //在箭头函数中this代表父级对象
+        }
+    }
+    user.say();
+    user.sing();
+    let t = '{"name": "TOM","age": 17}';
+    let tmp = JSON.parse(t);
+    alert(`My name is ${tmp.name},i am ${tmp.age}`);
+    document.write(JSON.stringify(user));
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="button" value="点我1" id="bt1">
+    <input type="button" value="点我2" id="bt2">
+
+    <script>
+        let bt1 = document.querySelector("#bt1");
+        let bt2 = document.querySelector("#bt2");
+
+        bt1.addEventListener("click",()=>{
+            console.log("bt1 clicked");
+        })
+
+        bt2.onclick = ()=>{
+            console.log("bt2 远古写法");
+        }
+    </script>
+</body>
+</html>

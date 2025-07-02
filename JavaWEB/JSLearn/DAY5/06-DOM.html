@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 id="node1">1111</h1>
+    <h2 class="hello">2222</h2>
+    <h2 class="hello">3333</h2>
+
+    <script>
+        let h1  = document.querySelector("#node1");
+        let h2 = document.querySelectorAll(".hello");
+
+        h1.innerHTML = "修改后的内容";
+        h2[0].innerHTML = "2qqq";
+        h2[1].innerHTML = "3www";
+    </script>
+</body>
+</html>
