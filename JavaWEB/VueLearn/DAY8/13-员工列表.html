@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>员工列表 - Tlias智能学习辅助系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+        }
+
+        /* 页面头部 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* 搜索区域 */
+        .search-section {
+            padding: 25px 30px;
+            background-color: white;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #555;
+            min-width: 50px;
+        }
+
+        .form-group input, .form-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #409eff;
+            color: white;
+        }
+
+    
+
+        .btn-secondary {
+            background-color: #909399;
+            color: white;
+        }
+
+    
+
+        /* 表格区域 */
+        .table-section {
+            padding: 0 30px 30px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #f8f9fa;
+        }
+
+        th, td {
+            padding: 15px 12px;
+            text-align: center;
+            border-bottom: 1px solid #e8e8e8;
+            font-size: 14px;
+        }
+
+        th {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .gender-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .male {
+            background-color: #409eff;
+        }
+
+        .female {
+            background-color: #f56c6c;
+        }
+
+        .position-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            background-color: #e1f3d8;
+            color: #67c23a;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn-edit {
+            background-color: #409eff;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background-color: #f56c6c;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container" id="list">
+        <!-- 页面头部 -->
+        <div class="header">
+            <h1>Tlias智能学习辅助系统</h1>
+            <button class="logout-btn">退出登录</button>
+        </div>
+        <!-- 搜索区域 -->
+        <div class="search-section">
+            <form class="search-form">
+                <div class="form-group">
+                    <label for="name">姓名</label>
+                    <input type="text" id="name" name="name" placeholder="请输入姓名" v-model="searchForm.name">
+                </div>
+                <div class="form-group">
+                    <label for="gender">性别</label>
+                    <select id="gender" name="gender" v-model="searchForm.gender">
+                        <option value="">请选择</option>
+                        <option value="1">男</option>
+                        <option value="0">女</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="position">职位</label>
+                    <select id="position" name="position" v-model="searchForm.job">
+                        <option value="">请选择</option>
+                        <option value="1">讲师</option>
+                        <option value="2">学工主管</option>
+                        <option value="3">教研主管</option>
+                        <option value="4">班主任</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary" v-on:click="search">查询</button>
+                <button type="button" class="btn btn-secondary" v-on:click="reset">清空</button>
+            </form>
+        </div>
+
+        <!-- 表格区域 -->
+        <div class="table-section">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>性别</th>
+                            <th>头像</th>
+                            <th>职位</th>
+                            <th>入职日期</th>
+                            <th>最后操作时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <tr class="listrow" v-for="(item,index) in employlist" :key="item.id">
+                            <td>{{item.name}}</td>
+                            <td>
+                                <!-- <span :class="'gender-icon '+(item.gender==1?'male':'female')">{{item.gender==1?"男":"女"}}</span>  -->
+                                <span :class="['gender-icon', item.gender==1?'male':'female']">{{item.gender==1?"男":"女"}}</span> 
+                            </td>
+                            <td><img v-bind:src="item.pic" :alt="item.name" width="50px"></td>
+                            <td><span class="position-tag" v-if="item.job==1">小鸡鸡</span>
+                                <span class="position-tag" v-else-if="item.job==2">三角篓子</span>
+                                <span class="position-tag" v-else-if="item.job==3">小黑子</span></td>
+                            <td>{{item.jointime}}</td>
+                            <td>{{item.lastoptime}}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-edit">编辑</button>
+                                    <button class="btn-delete">删除</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+       import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+
+       createApp({
+        data(){
+            return {
+                employlist:[
+                    {   id:1,
+                        name:"马嘉祺",
+                        gender:0,
+                        pic:"./1.png",
+                        job:1,
+                        jointime:"2021-03-15",
+                        lastoptime:"2023-07-30T12:00:00Z"
+                    },
+                    {   id:2,
+                        name:"牛尿闻",
+                        gender:0,
+                        pic:"./2.png",
+                        job:2,
+                        jointime:"2021-03-15",
+                        lastoptime:"2023-07-30T12:00:00Z"
+                    },
+                    {
+                        id:3,
+                        name:"宋亚轩",
+                        gender:0,
+                        pic:"./3.png",
+                        job:3,
+                        jointime:"2021-03-15",
+                        lastoptime:"2023-07-30T12:00:00Z"
+                    },
+                ],
+                searchForm:{
+                    name:'',
+                    gender:'',
+                    job:''
+                }
+            };
+        },
+        methods: {
+            search(){
+                console.log(this.searchForm);
+                
+            },
+            reset(){
+                this.searchForm.name = '';
+                this.searchForm.job = '';
+                this.searchForm.gender = '';
+            }
+        },           
+    }).mount("#list");
+    </script>
+</body>
+</html>

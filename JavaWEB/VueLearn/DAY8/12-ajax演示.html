@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="test">
+        <input type="button" value="GET" v-on:click="fget">
+        <input type="button" value="POST" v-on:click="fpost">
+    </div>
+    
+    <script src="../js/axios.min.js"></script>
+    <script type="module">
+       import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+
+       createApp({
+                 methods: {
+                    fget(){
+                        axios({
+                            method: 'GET',
+                            url: 'https://mock.apifox.cn/m1/3083103-0-default/emps/list'
+                        })
+                            .then(response => { // 处理成功的响应
+                                console.log(response.data); 
+                            })
+                            .catch(error => { // 处理错误
+                                alert('Error fetching data:', error);
+                            });
+                    },
+                    fpost(){
+                        axios({
+                            method: 'POST',
+                            url: 'https://mock.apifox.cn/m1/3083103-0-default/emps/update'
+                        })
+                            .then(response => { // 处理成功的响应
+                                console.log(response.data); 
+                            })
+                            .catch(error => { // 处理错误
+                                alert('Error fetching data:', error);
+                            });
+                    }
+                 },
+    }).mount("#test");
+    </script>
+</body>
+</html>
