@@ -159,3 +159,51 @@ HTML标签上带有`v-`前缀的属性称为**指令**。指令是Vue.js提供�
     - 格式
         - GET请求：`axios.get(url, { params: { key: 'value' } })`
         - POST请求：`axios.post(url, data)`
+
+#### async/await
+- 介绍：`async/await`是ES2017引入的语法糖
+- 作用：使异步代码更易读，类似于同步代码的写法。
+- 使用步骤：
+    1. 在函数前添加`async`关键字
+    2. 使用`await`关键字等待异步操作完成
+- 示例代码：
+```javascript
+async function fetchData() {
+    try {
+        let response = await axios.get('https://api.example.com/data');
+        console.log(response.data);
+    } catch (error) {
+        alert('Error fetching data:', error);
+    }
+}
+```
+
+### Vue生命周期
+- 介绍：Vue实例在创建、更新和销毁的过程中会经历一系列
+的生命周期钩子函数。
+- 作用：可以在这些钩子函数中执行特定的操作，如数据初始化、事件监听等。
+- 生命周期钩子函数：
+| 钩子函数 | 说明 |
+|----------|------|
+| beforeCreate | 实例创建之前调用，此时数据观测和事件配置尚未完成。 |
+| created | 实例创建完成后调用，此时数据观测和事件配置已完成
+| mounted | 实例挂载到DOM上后调用，此时可以访问DOM元素。 |
+| beforeUpdate | 数据更新之前调用，此时可以访问更新前的DOM状态。 |
+| updated | 数据更新后调用，此时可以访问更新后的DOM状态。 |
+| beforeUnmount | 实例销毁之前调用，此时可以进行清理操作。 |
+| unmounted | 实例销毁后调用，此时可以进行资源释放等操作。 |
+
+- 声明
+```javascript
+export default {
+    data() {
+        return {
+            message: 'Hello Vue!'
+        };
+    },
+    created() {
+        console.log('实例创建完成');
+    }
+};
+```
+加油明天开MAVEN

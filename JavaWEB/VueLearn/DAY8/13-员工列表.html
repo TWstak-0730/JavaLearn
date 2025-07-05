@@ -212,7 +212,7 @@
                     <select id="gender" name="gender" v-model="searchForm.gender">
                         <option value="">请选择</option>
                         <option value="1">男</option>
-                        <option value="0">女</option>
+                        <option value="2">女</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -252,12 +252,14 @@
                                 <!-- <span :class="'gender-icon '+(item.gender==1?'male':'female')">{{item.gender==1?"男":"女"}}</span>  -->
                                 <span :class="['gender-icon', item.gender==1?'male':'female']">{{item.gender==1?"男":"女"}}</span> 
                             </td>
-                            <td><img v-bind:src="item.pic" :alt="item.name" width="50px"></td>
-                            <td><span class="position-tag" v-if="item.job==1">小鸡鸡</span>
-                                <span class="position-tag" v-else-if="item.job==2">三角篓子</span>
-                                <span class="position-tag" v-else-if="item.job==3">小黑子</span></td>
-                            <td>{{item.jointime}}</td>
-                            <td>{{item.lastoptime}}</td>
+                            <td><img v-bind:src="item.image" :alt="item.name" width="50px"></td>
+                            <td><span class="position-tag" v-if="item.job==1">讲师</span>
+                                <span class="position-tag" v-else-if="item.job==2">学工主管</span>
+                                <span class="position-tag" v-else-if="item.job==3">教研主管</span>
+                                <span class="position-tag" v-else-if="item.job==4">班主任</span>
+                            </td>
+                            <td>{{item.entrydate}}</td>
+                            <td>{{item.updatetime}}</td>
                             <td>
                                 <div class="action-buttons">
                                     <button class="btn-edit">编辑</button>
@@ -270,40 +272,16 @@
             </div>
         </div>
     </div>
-
+    <script src="../js/axios.min.js"></script>
     <script type="module">
        import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
        createApp({
+        
         data(){
+            
             return {
-                employlist:[
-                    {   id:1,
-                        name:"马嘉祺",
-                        gender:0,
-                        pic:"./1.png",
-                        job:1,
-                        jointime:"2021-03-15",
-                        lastoptime:"2023-07-30T12:00:00Z"
-                    },
-                    {   id:2,
-                        name:"牛尿闻",
-                        gender:0,
-                        pic:"./2.png",
-                        job:2,
-                        jointime:"2021-03-15",
-                        lastoptime:"2023-07-30T12:00:00Z"
-                    },
-                    {
-                        id:3,
-                        name:"宋亚轩",
-                        gender:0,
-                        pic:"./3.png",
-                        job:3,
-                        jointime:"2021-03-15",
-                        lastoptime:"2023-07-30T12:00:00Z"
-                    },
-                ],
+                employlist:[],
                 searchForm:{
                     name:'',
                     gender:'',
@@ -312,15 +290,25 @@
             };
         },
         methods: {
-            search(){
-                console.log(this.searchForm);
-                
-            },
+            async search(){
+                try{
+                    let response = await axios.get(`https://web-server.itheima.net/emps/list?name=${this.searchForm.name}&gender=${this.searchForm.gender}&job=${this.searchForm.job}`);
+                    console.log(response.data.data);
+                    this.employlist = response.data.data;
+                }catch(error){
+                    console.log(error);
+                }
+            }
+            ,
             reset(){
                 this.searchForm.name = '';
                 this.searchForm.job = '';
                 this.searchForm.gender = '';
+                this.search();
             }
+        },
+        mounted(){
+            this.search();
         },           
     }).mount("#list");
     </script>
