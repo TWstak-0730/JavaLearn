@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时代少年团大名单</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+        }
+
+        /* 页面头部 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 72px;
+            font-weight: 500;
+            font-family: 'KaiTi';
+        }
+
+        /* 表格区域 */
+        .table-section {
+            padding: 0 30px 30px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #414e5b;
+        }
+
+        th, td {
+            padding: 15px 12px;
+            text-align: center;
+            border-bottom: 1px solid #e8e8e8;
+            font-size: 14px;
+        }
+
+        th {
+            font-weight: 600;
+            color: #333;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container" id = "list">
+        <!-- 页面头部 -->
+         <div class="header">
+            <h1>时代少年团大名单</h1>
+         </div>
+         <br><br><br>
+        <!-- 表格区域 -->
+        <div class="table-section">
+            <div class="table-container">
+                <table>
+                    <thead class="table-header">
+                        <tr>
+                            <th>ID</td>
+                            <th>用户名</td>
+                            <th>学校</td>
+                            <th>姓名</td>
+                            <th>年龄</td>
+                            <th>更新时间</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="listrow" v-for="(item, index) in Userlist" :key="item.id">
+                            <td>{{item.id}}</td>
+                            <td>{{item.username}}</td>
+                            <td>{{item.school}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.age}}</td>
+                            <td>{{item.updateTime}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="./js/axios.min.js"></script>
+    <script type="module">
+       import { createApp } from './js/vue.esm-browser.js';
+
+       createApp(
+        {
+            data() {
+                return {
+                    Userlist:[
+                    
+                    ],
+                }
+            },
+            methods: {
+                async load(){
+                    try{
+                    let response = await axios.get(`http://127.0.0.1:8080/list`);
+                    console.log(response);
+                    this.Userlist = response.data;
+                    }catch(error){
+                        console.log(error);
+                    }
+                },
+            },
+            mounted(){
+                this.load();
+            },
+        }
+       ).mount('#list');
+    </script>
+</body>
+</html>
