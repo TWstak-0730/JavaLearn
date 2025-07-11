@@ -1,6 +1,7 @@
 package xyz.twstak.userlist.controller;
 
 import cn.hutool.core.io.IoUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.twstak.userlist.User;
@@ -18,7 +19,13 @@ import java.util.List;
 
 @RestController
 public class UserController {
-    private UserService userService = new UserServiceImpl();
+
+    private final UserService userService;
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @RequestMapping("/list")
     public List<User> getUserList() throws Exception {
         List<User> usersList=userService.getUsers();

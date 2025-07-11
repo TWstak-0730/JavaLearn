@@ -137,4 +137,120 @@ public class RequesController {
 ### 分层解耦
 
 - 耦合：指模块之间的依赖关系，耦合度越高，模块之间的依赖关系越紧密。
-- 内聚
+- 内聚：指模块内部各个部分之间的关系，内聚度越高，模块内部各个部分之间的关系越紧密。
+- 设计原则：
+    - 高内聚低耦合：模块内部各个部分之间的关系紧密，模块之间的依赖关系松散。
+    - 单一职责原则：每个模块只负责一个功能，避免模块过于复杂。
+    - 开闭原则：模块对扩展开放，对修改关闭，便于后续功能的扩展。
+
+- 控制反转 IOC：
+    - 控制反转（Inversion of Control，IoC）是一种设计原则，指将对象的创建和管理交给容器来处理，而不是由对象自身来管理。
+- 依赖注入（DI）实现控制反转，将对象的依赖关系交给容器来管理。
+- Bean：Spring容器管理的对象称为Bean，Bean是Spring IoC容器中的核心概念。 
+
+实现方法：
+1. 将Dao及Service类标注为`@Component`或其派生注解（如`@Service`、`@Repository`）。
+2. 在Controller类中使用`@Autowired`注解自动注入依赖的Bean。
+```JAVA
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository userRepository; // 自动注入UserRepository
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+}
+```
+
+`@Component`、`@Service`、`@Repository`、`@Controller`等注解用于标识Bean的类型，Spring会根据这些注解进行自动装配。
+|注解|说明|位置|
+|---|---|---|
+|@Component|通用的组件注解，用于标识一个Bean|不属于以下三类时用此注解|
+|@Service|用于标识服务层的Bean，通常用于业务逻辑处理|服务层类上|
+|@Repository|用于标识数据访问层的Bean，通常用于数据库操作|数据访问层类上|
+|@Controller|用于标识控制器层的Bean，通常用于处理请求|控制器类上|
+
+- 前面声明的bean的四大注解，要想生效，还要需要被组件扫描注解`@ComponentScan`。
+- 该注解虽然没有显示配置，但`@SpringBootApplication`注解已经包含了`@ComponentScan`，默认扫描当前包及其子包下的组件。
+
+- 属性注入
+    ```JAVA
+    @Service
+    public class UserService {
+        @Autowired
+        private UserRepository userRepository; // 自动注入UserRepository
+
+        public User getUserById(Long id) {
+            return userRepository.findById(id).orElse(null);
+        }
+    }
+    ```
+
+- 构造函数注入
+```JAVA
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+
+    @Autowired//只有一个构造函数注入时，可以省略@Autowired注解
+    // Spring会自动调用这个构造函数来创建UserService实例
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository; // 通过构造函数注入UserRepository
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+}
+```
+
+
+
+- 方法注入
+```JAVA
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+}
+```
+
+- `@Autowired`注解默认是按照类型进行自动装配的，如果有多个同类型的Bean，可以使用以下三种方式解决冲突：
+1. 使用`@Qualifier`注解指定具体的Bean名称。
+```JAVA
+@Service
+public class UserService {
+    @Autowired
+    @Qualifier("userRepository") // 指定具体的Bean名称
+    private UserRepository userRepository;
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+}
+```
+2. 使用`@Primary`注解标记一个Bean为主要的Bean，当有多个同类型的Bean时，优先使用被标记为`@Primary`的Bean。
+```JAVA
+@Repository
+@Primary // 标记为主要的Bean
+public class UserRepositoryImpl implements UserRepository {
+    // 实现具体的数据库操作
+}
+```
+3. 使用`@Resource`注解，它可以根据名称或类型进行自动装配。
+```JAVA
+@Service
+public class UserService {
+    @Resource
+    private UserRepository userRepository;
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+}
+```
