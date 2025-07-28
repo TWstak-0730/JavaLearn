@@ -1,8 +1,6 @@
-package com.itheima.pojo;
+package xyz.twstak.tliaswebmanagement.pojo;
 
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * 后端统一返回结果
