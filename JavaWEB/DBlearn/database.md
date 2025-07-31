@@ -238,3 +238,97 @@ mysql8 默认字符集为 `utf8mb4`：
             1. 偏移量从0开始，表示从第几条记录开始查询。
             2. 如果起始索引为0，可以省略不写。
             3. 分页查询是数据库的方言，MySQL支持`LIMIT`语法。
+
+### 多表关系
+
+#### 一对多
+- 场景：一个部门可以有多个员工
+在多的一方（员工表）中添加外键，指向一的一方（部门表）的主键。
+```sql
+alter table 员工表 add constraint fk_部门 foreign key (部门_id) references 部门表(id);
+```
+- 物理外键：使用`foreign key`约束来维护数据的完整性。
+- 缺点：物理外键会增加数据库的复杂性和性能开销，尤其是在数据量较大时。适用于单节点数据库。容易发生死锁。
+- 逻辑外键：在应用层维护外键关系，不使用数据库的外键约束。
+
+#### 一对一
+- 场景：一个用户只能有一个个人信息记录
+- 多用于单表拆分，将一张表的基础字段和扩展字段分开存储。
+- 实现：在任意一方添加外键，指向另一方的主键，并设置外键为`Unique`。
+```sql
+alter table 用户表 add constraint fk_个人信息 Unique foreign key (用户_id) references 个人信息表(id);
+```
+
+#### 多对多
+- 场景：一个学生可以选修多门课程，一门课程可以被多个学生选修
+- 实现：创建一个关联表（中间表），包含两边的主键作为外键。
+```sql
+create table 学生课程 (
+    学生_id int,
+    课程_id int,
+    primary key (学生_id, 课程_id),
+    foreign key (学生_id) references 学生表(id),
+    foreign key (课程_id) references 课程表(id)
+);
+```
+
+#### 多表查询
+```sql
+select
+    a.列名1, b.列名2
+from
+    表1 a, 表2 b
+where
+    a.列名3 = b.列名4;
+```
+
+- 连接查询：
+    - 内连接：交集查询
+        - 隐式内连接
+        ```sql
+        select a.列名1, b.列名2
+        from 表1 a, 表2 b
+        where a.列名3 = b.列名4;
+        ```
+        - 显式内连接
+        ```sql
+        select a.列名1, b.列名2
+        from 表1 a
+        [inner] join 表2 b on a.列名3 = b.列名4
+        ```
+    - 外连接：差集查询
+        - 左外连接：左表所有记录，右表匹配的记录
+        ```sql
+        select a.列名1, b.列名2
+        from 表1 a
+        left join 表2 b on a.列名3 = b.列名4
+        ```
+        - 右外连接：右表所有记录，左表匹配的记录
+        ```sql
+        select a.列名1, b.列名2
+        from 表1 a
+        right join 表2 b on a.列名3 = b.列名4
+        ```
+        - 全外连接：两边所有记录，匹配的记录合并
+        ```sql
+        select a.列名1, b.列名2
+        from 表1 a
+        full join 表2 b on a.列名3 = b.列名4
+        ```
+- 子查询：SQL语句嵌套在另一个SQL语句中
+    1. 标量子查询：子查询返回结果为单个值
+    ```sql
+    select 列名1 from 表名 where 列名2 = (select 列名2 from 表名 where 条件);
+    ```
+    2. 列子查询：子查询返回结果为单列
+    ```sql
+    select 列名1 from 表名 where 列名2 in (select 列名2 from 表名 where 条件);
+    ```
+    3. 行子查询：子查询返回结果为单行
+    ```sql
+    select 列名1 from 表名 where (列名2, 列名3) = (select 列名2, 列名3 from 表名 where 条件);
+    ```
+    4. 表子查询：子查询返回结果为多行多列
+    ```sql
+    select 列名1 from 表名 where 列名2 in (select 列名2, 列名3 from 表名 where 条件);
+    ```

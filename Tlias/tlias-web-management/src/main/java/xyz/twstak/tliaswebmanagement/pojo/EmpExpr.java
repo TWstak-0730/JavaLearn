@@ -1,4 +1,4 @@
-package com.itheima.pojo;
+package xyz.twstak.tliaswebmanagement.pojo;
 
 import lombok.Data;
 

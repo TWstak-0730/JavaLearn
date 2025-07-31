@@ -165,6 +165,92 @@ public Result delete(@RequestParam("id") Integer deptId) {//如果声明了@Requ
 |WARN|警告信息，表示可能存在问题|log.warn("警告信息")|
 |ERROR|错误信息，表示系统出现异常|log.error("错误信息")|
 ### 员工管理
+- 查询所有员工信息，并查询出部门名称
+- 准备数据库表emp,emp_expr实体类Emp,EmpExpr三层架构
+- 可在Controller层类中使用`@RequestMapping("/emps")`代替`@GetMapping("/emps")`，这样可以将所有请求映射到该类中，方便管理。
+- pageHelper分页插件
+    - 引入依赖
+    ```xml
+    <dependency>
+        <groupId>com.github.pagehelper</groupId>
+        <artifactId>pagehelper-spring-boot-starter</artifactId>
+        <version>1.4.2</version>
+    </dependency>
+    ```
+    - 在Service层中使用PageHelper进行分页查询
+    ```java
+        public PageResult<Emp> getEmpList(Integer page, Integer pageSize) {
+            PageHelper.startPage(page, pageSize);
+            Page<Emp> p = (Page<Emp>) empMapper.getEmpList();
+            return new PageResult<Emp>(p.getTotal(),p.getResult());
+        }
+    ```
+    - `PageHelper`实现机制
+        在调用`Mapper`中对应的查询方法时自动拦截`SQL`语句，并在执行前进行分页参数的设置。
+    - 注意：
+        1. 在使用`PageHelper`时，不能再语句中加`;`，否则会导致`SQL`语句错误。
+        2. 在使用`PageHelper`时，只会在设置`startPage`后的第一条SQL语句生效。
+- 条件查询
+    - 使用xml配置Select语句
+        1. 在resource目录下创建与mapper同包同名的文件夹，并在其中创建EmpMapper.xml文件。
+        ```xml
+                <?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <mapper namespace="xyz.twstak.tliaswebmanagement.mapper.EmpMapper">
+            <select id="getEmpList" resultType="xyz.twstak.tliaswebmanagement.pojo.Emp">
+                SELECT e.*,d.name from emp e
+                    left join dept d on e.dept_id = d.id
+                                where (e.name like '%阮%' || e.name is null ) and
+                                        (e.gender = 1||e.gender is null ) and
+                                        ((e.entry_date between '2000-01-01' and '2099-12-31')||e.entry_date is null)
+                                order by e.update_time desc
+            </select>
+        </mapper>
+        ```
+        resultType属性指定返回结果的类型是返回结果列表的单条数据对应的数据类型。
+        ```xml
+        <where>
+            <if test="name != null and name != ''">
+                (e.name like concat('%',#{name},'%'))
+            </if>
+            <if test="gender!=null">
+                and (e.gender = #{gender})
+            </if>
+            <if test="begin!=null and end != null">
+                and (e.entry_date between #{begin} and #{end})
+            </if>
+        </where>
+        ```
+        根据前端传入的参数进行条件查询。
+#### 新增员工
+1. 分两个表`emp`和`emp_expr`，分别存储员工基本信息和扩展信息。
+在存储expr时使用`<foreach>`
+```xml
+<insert id="batAddEmpExpr">
+        INSERT INTO emp_expr (emp_id, expr_id, expr_value, create_time, update_time)
+        VALUES
+        <foreach collection="exprList" item="expr" separator=",">
+            (#{expr.empId},#{expr.begin},#{expr.end},#{expr.company},#{expr.job})
+        </foreach>
+</insert>
+```
+`<foreach>`标签用于遍历集合，`collection`属性指定要遍历的集合，`item`属性指定每次遍历的元素变量名，`separator`属性指定元素之间的分隔符,`open` `close`属性指定开始和结束时拼接的片段。
+
+- 主键返回
+    1. 在`mapper.xml`中配置主键返回
+    ```xml
+    <insert id="addEmp" useGeneratedKeys="true" keyProperty="id">
+    ```
+    2. 在`Mapper`接口方法前添加
+    ```java
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    ```
+
+#### 事务管理
+在多表操作时，需要使用事务管理来保证数据的一致性和完整性。
+
 ### 报表统计
 ### 登录认证
 ### 日志管理
